@@ -1,0 +1,18 @@
+.character {
+    
+}
+
+.attackBtn {
+    visibility: hidden;
+}
+
+.resetBtn {
+    visibility: hidden;
+}
+.defender {
+    border: 3px solid red;
+}
+
+.attacker {
+    border: 3px solid blue;
+}
