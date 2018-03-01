@@ -1,5 +1,9 @@
-.character {
-    
+.char {
+    background-color: aqua;
+    border: 1px solid #111;
+    max-width: 200px;
+    height: 230px;
+    text-align: center;
 }
 
 .attackBtn {

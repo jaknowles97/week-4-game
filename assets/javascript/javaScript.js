@@ -2,7 +2,7 @@ $(document).ready(function() {
     var player;
     var defender;
     var fightCounter = 1;
-    var enemiesToKill = [];
+    var enemiesToKill;
     var enemiesKilled = 0;
 
 
@@ -60,9 +60,8 @@ $(document).ready(function() {
         }else if(spawnPos === ".player-field") {
             createCard(char, ".player-field", "player")
             $(".attackBtn").css("visibility", "visible");
-        } else if(spawnPos === "enemy-field") {
-            createCard(char, ".enemy-field", 'enemy')
-            enemiesToKill.push(char.name);
+        } else if(spawnPos === ".enemy-field") {
+            createCard(char, ".enemy-field", 'enemy');
         }else if(spawnPos === ".defender-field") {
             $(".defender-field").empty();
             createCard(char, ".defender-field", "defender");
@@ -71,7 +70,25 @@ $(document).ready(function() {
         }
     }
 
-    spawnCard(characters, ".player-field");
+    spawnCard(characters, ".player-select-field");
+
+    $(document).on("click", ".char", function() {
+        $(".player-select-field").empty();
+        // first click of the game (the only time the player is undefined) will determine the player.
+        if(player === undefined) {
+            name = $(this).data("name");
+            player = characters[name];
+            spawnCard(characters[name], ".player-field");
+            console.log("clicked on " + $(this).data("name")+ " to be the player!");
+        }
+        //every other character tha
+        for(var key in characters) {
+            if(key != name) {
+                spawnCard(characters[key], ".enemy-field")
+                enemiesToKill++;
+            }
+        }
+    });
 
     
 
