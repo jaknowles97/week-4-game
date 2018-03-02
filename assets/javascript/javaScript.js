@@ -33,6 +33,46 @@ $(document).ready(function() {
         }
     };
 
+    var initate = function() {
+        $(".enemy-field").empty();
+        $(".player-field").empty();
+        $(".enemy-field").empty();
+        $(".battle-terminal").empty();
+        $(".resetBtn").hide();
+        $(".attackBtn").hide();
+        player = undefined;
+        defender = undefined;
+
+        characters = {
+            'luke': {
+                name: 'luke',
+                hp: 120,
+                atk: 10,
+                counterAtk: 5
+            },
+            'darth': {
+                name: 'darth',
+                hp: 80,
+                atk: 20,
+                counterAtk: 15
+            },
+            'yoda': {
+                name: 'yoda',
+                hp: 150,
+                atk: 15,
+                counterAtk: 10
+            },
+            'jabba': {
+                name: 'jabba',
+                hp: '200',
+                atk: 5,
+                counterAtk: 5
+            }
+        };
+
+        spawnCard(characters, ".player-select-field");
+    }
+
     var createCard = function(char, spawnPos, charRole) {
         var column = $("<div class='col text-center'>")
         var card = $("<div class='char' data-name='"+ char.name +"' >");
@@ -62,7 +102,7 @@ $(document).ready(function() {
             }
         }else if(spawnPos === ".player-field") {
             createCard(char, ".player-field", "player")
-            $(".attackBtn").css("visibility", "visible");
+            $(".attackBtn").show();
         } else if(spawnPos === ".enemy-field") {
             createCard(char, ".enemy-field", 'enemy');
         }else if(spawnPos === ".defender-field") {
@@ -90,10 +130,10 @@ $(document).ready(function() {
         }
 
         if(msg === 'won' || msg === 'lost') {
-            $(".resetBtn").css("visibility", "visible");
+            $(".resetBtn").show();
             
         } else {
-            $(".resetBtn").css("visibility", "hidden");
+            $(".resetBtn").hide();
         }
         if(msg === 'won' ) {
             msg = '<h3 class="display-4"> YOU WON</h3>';
@@ -103,8 +143,8 @@ $(document).ready(function() {
         $(".battle-terminal").html(msg);
     }
 
-
-    spawnCard(characters, ".player-select-field");
+    //---------------------------------------------------------------------------------------------------------------------------------//
+    initate();
 
     $(document).on("click", ".char", function() {
         $(".player-select-field").empty();
@@ -122,7 +162,7 @@ $(document).ready(function() {
                     enemies.push(characters[key]);
                 }
             }
-            console.log("total enemies waiting: " + enemies);
+            console.log("total enemies waiting: " + enemies.name);
             //if player is selcted and there is no defender, click selects defender
         } else if(defender === undefined) {
             if($(this).data("name") != player.name) {
@@ -144,6 +184,7 @@ $(document).ready(function() {
 
 
     $(document).on("click","button", function() {
+        // if attack button has been clicked
         if($(this).hasClass("attackBtn")) {
             //player attacks
             defender.hp -= (player.atk * fightCounter);
@@ -159,18 +200,25 @@ $(document).ready(function() {
             $(".defender-field").empty();
             spawnCard(player, ".player-field");
             spawnCard(defender, ".defender-field");
-
+        } else if($(this).hasClass("resetBtn")) {
+            initate();
         }
         if(defender.hp <= 0) {
             $(".defender-field").empty();
             $(".battle-terminal").empty();
             batTerm("death", player, defender);
+            deadEnemies++;
             defender = undefined;
+        }
+        // win or lose msg
+        if(deadEnemies === 3) {
+            $(".battle-terminal").append(batTerm("won"));
+            $(".resetBtn").show();
+        } else if (player.hp <= 0) {
+            $(".battle-terminal").append(batTerm("lost"));
+            $(".resetBtn").show();
         }
     });
 
- 
-    
-    
 
 });

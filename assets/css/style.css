@@ -11,11 +11,11 @@ margin: 0 auto;
 }
 
 .attackBtn {
-    visibility: hidden;
+
 }
 
 .resetBtn {
-    visibility: hidden;
+    
 }
 .defender {
     border: 3px solid red;
