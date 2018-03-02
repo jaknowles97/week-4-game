@@ -43,32 +43,7 @@ $(document).ready(function() {
         player = undefined;
         defender = undefined;
 
-        characters = {
-            'luke': {
-                name: 'luke',
-                hp: 120,
-                atk: 10,
-                counterAtk: 5
-            },
-            'darth': {
-                name: 'darth',
-                hp: 80,
-                atk: 20,
-                counterAtk: 15
-            },
-            'yoda': {
-                name: 'yoda',
-                hp: 150,
-                atk: 15,
-                counterAtk: 10
-            },
-            'jabba': {
-                name: 'jabba',
-                hp: '200',
-                atk: 5,
-                counterAtk: 5
-            }
-        };
+
 
         spawnCard(characters, ".player-select-field");
     }
@@ -115,17 +90,17 @@ $(document).ready(function() {
     }
     // a.k.a. "Battle Terminal", manages all the juicy detials of the game
     var batTerm = function(msg, play, def) {
-
+        var damage = play.atk * fightCounter;
         if(msg === "inBattle") {
             msg = 
             '<p>' + play.name + ' charges toward ' + def.name + ' and attacks. </p>' +
-            '<p> The attack does <b>' +  play.atk * fightCounter + '</b> damage leaving ' + def.name + ' with <b>' + def.hp + 'hp.</b></p>' +
+            '<p> The attack does <b>' +  damage + '</b> damage leaving ' + def.name + ' with <b>' + def.hp + 'hp.</b></p>' +
             '<p>' + def.name + ' hits you back and leaves you with <b>' + play.hp + 'hp.</b></p>' +
             '<p>' + def.name + ' still stands.. Dare you attack again?</p>';
         }else if (msg === "death") {
         msg =
             '<p>' + play.name + ' charges toward ' + def.name + ' and attacks. </p>' +
-            '<p> The attack does <b>' +  play.atk * fightCounter + '</b> damage leaving ' + def.name + ' unconcious on the floor!' +
+            '<p> The attack does <b>' +  (play.atk * fightCounter) + '</b> damage leaving ' + def.name + ' unconcious on the floor!' +
             '<p> click on an enemy to fight! Choose wisely...</p>';
         }
 
@@ -171,6 +146,7 @@ $(document).ready(function() {
                 defender = characters[name];
                 spawnCard(characters[name], ".defender-field");
                 enemies.push(characters[name]);
+                $(".battle-terminal").empty();
                 // update enemies on screen
                 $(".enemy-field").empty();
                 for(var key in enemies) {
@@ -187,7 +163,7 @@ $(document).ready(function() {
         // if attack button has been clicked
         if($(this).hasClass("attackBtn")) {
             //player attacks
-            defender.hp -= (player.atk * fightCounter);
+             defender.hp -= player.atk * fightCounter;
             //player hits back
             player.hp -= defender.counterAtk;
             $(".battle-terminal").empty();
@@ -203,13 +179,6 @@ $(document).ready(function() {
         } else if($(this).hasClass("resetBtn")) {
             initate();
         }
-        if(defender.hp <= 0) {
-            $(".defender-field").empty();
-            $(".battle-terminal").empty();
-            batTerm("death", player, defender);
-            deadEnemies++;
-            defender = undefined;
-        }
         // win or lose msg
         if(deadEnemies === 3) {
             $(".battle-terminal").append(batTerm("won"));
@@ -218,6 +187,16 @@ $(document).ready(function() {
             $(".battle-terminal").append(batTerm("lost"));
             $(".resetBtn").show();
         }
+        if(defender.hp <= 0) {
+            $(".defender-field").empty();
+            $(".battle-terminal").empty();
+            batTerm("death", player, defender);
+            deadEnemies++;
+            defender = undefined;
+
+        }
+
+
     });
 
 
