@@ -26,7 +26,7 @@ $(document).ready(function() {
             counterAtk: 10
         },
         'jabba': {
-            name: 'jabba-da-pizza-hut',
+            name: 'jabba',
             hp: '200',
             atk: 5,
             counterAtk: 5
@@ -104,13 +104,14 @@ $(document).ready(function() {
                 // update enemies on screen
                 $(".enemy-field").empty();
                 for(var key in enemiesToKill) {
-                    if(enemiesToKill[key] != defender) {
+                    if(enemiesToKill[key] != defender && enemiesToKill[key].hp > 0) {
                         spawnCard(enemiesToKill[key], ".enemy-field");
                     }
                 }
             }
         }
     });
+
 
     $(document).on("click","button", function() {
         if($(this).hasClass("attackBtn")) {
@@ -128,14 +129,13 @@ $(document).ready(function() {
             spawnCard(defender, ".defender-field");
 
         }
-    });
-    while(player.hp > 0) {
         if(defender.hp <= 0) {
             $(".defender-field").empty();
-            deadCharacters.push(defender.name);
             defender = undefined;
         }
-    }
+    });
+
+ 
 
     
 
