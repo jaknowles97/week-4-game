@@ -2,8 +2,8 @@ $(document).ready(function() {
     var player;
     var defender;
     var fightCounter = 1;
-    var enemiesToKill = [];
-    var deadCharacters = [];
+    var enemies = [];
+    var deadEnemies = 0;
 
 
     let characters = {
@@ -73,6 +73,36 @@ $(document).ready(function() {
         }
         console.log('spawnCard was called.  char: '+char+'spawnPos: '+spawnPos)
     }
+    // a.k.a. "Battle Terminal", manages all the juicy detials of the game
+    var batTerm = function(msg, play, def) {
+
+        if(msg === "inBattle") {
+            msg = 
+            '<p>' + play.name + ' charges toward ' + def.name + ' and attacks. </p>' +
+            '<p> The attack does <b>' +  play.atk * fightCounter + '</b> damage leaving ' + def.name + ' with <b>' + def.hp + 'hp.</b></p>' +
+            '<p>' + def.name + ' hits you back and leaves you with <b>' + play.hp + 'hp.</b></p>' +
+            '<p>' + def.name + ' still stands.. Dare you attack again?</p>';
+        }else if (msg === "death") {
+        msg =
+            '<p>' + play.name + ' charges toward ' + def.name + ' and attacks. </p>' +
+            '<p> The attack does <b>' +  play.atk * fightCounter + '</b> damage leaving ' + def.name + ' unconcious on the floor!' +
+            '<p> click on an enemy to fight! Choose wisely...</p>';
+        }
+
+        if(msg === 'won' || msg === 'lost') {
+            $(".resetBtn").css("visibility", "visible");
+            
+        } else {
+            $(".resetBtn").css("visibility", "hidden");
+        }
+        if(msg === 'won' ) {
+            msg = '<h3 class="display-4"> YOU WON</h3>';
+        } else if(msg === 'lost') {
+            msg = '<h3 class="display-4"> < WASTED /> <br> you lost.</h3>';
+        }
+        $(".battle-terminal").html(msg);
+    }
+
 
     spawnCard(characters, ".player-select-field");
 
@@ -89,10 +119,10 @@ $(document).ready(function() {
             for(var key in characters) {
                 if(key != name) {
                     spawnCard(characters[key], ".enemy-field")
-                    enemiesToKill.push(characters[key]);
+                    enemies.push(characters[key]);
                 }
             }
-            console.log("total enemies waiting: " + enemiesToKill);
+            console.log("total enemies waiting: " + enemies);
             //if player is selcted and there is no defender, click selects defender
         } else if(defender === undefined) {
             if($(this).data("name") != player.name) {
@@ -100,12 +130,12 @@ $(document).ready(function() {
                 name = $(this).data("name");
                 defender = characters[name];
                 spawnCard(characters[name], ".defender-field");
-                enemiesToKill.push(characters[name]);
+                enemies.push(characters[name]);
                 // update enemies on screen
                 $(".enemy-field").empty();
-                for(var key in enemiesToKill) {
-                    if(enemiesToKill[key] != defender && enemiesToKill[key].hp > 0) {
-                        spawnCard(enemiesToKill[key], ".enemy-field");
+                for(var key in enemies) {
+                    if(enemies[key] != defender && enemies[key].hp > 0) {
+                        spawnCard(enemies[key], ".enemy-field");
                     }
                 }
             }
@@ -119,6 +149,8 @@ $(document).ready(function() {
             defender.hp -= (player.atk * fightCounter);
             //player hits back
             player.hp -= defender.counterAtk;
+            $(".battle-terminal").empty();
+            batTerm("inBattle", player, defender);
             fightCounter++;
             console.log("defender hp: " + defender.hp + " fightCounter: " + fightCounter);
             console.log("player hp: " + player.hp);
@@ -131,12 +163,14 @@ $(document).ready(function() {
         }
         if(defender.hp <= 0) {
             $(".defender-field").empty();
+            $(".battle-terminal").empty();
+            batTerm("death", player, defender);
             defender = undefined;
         }
     });
 
  
-
+    
     
 
 });
