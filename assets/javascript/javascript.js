@@ -180,10 +180,7 @@ $(document).ready(function() {
             initate();
         }
         // win or lose msg
-        if(deadEnemies === 3) {
-            $(".battle-terminal").append(batTerm("won"));
-            $(".resetBtn").show();
-        } else if (player.hp <= 0) {
+        if (player.hp <= 0) {
             $(".battle-terminal").append(batTerm("lost"));
             $(".resetBtn").show();
         }
@@ -194,6 +191,10 @@ $(document).ready(function() {
             deadEnemies++;
             defender = undefined;
 
+            if(deadEnemies === 3) {
+                $(".battle-terminal").append(batTerm("won"));
+                $(".resetBtn").show();
+            }
         }
 
 
