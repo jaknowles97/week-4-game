@@ -1,9 +1,10 @@
 .char {
-    background-color: aqua;
-    border: 1px solid #111;
-    max-width: 200px;
-    height: 230px;
-    text-align: center;
+height: 100px;
+color: green;
+background-color: burlywood;
+height: 130px;
+max-width: 100px;
+margin: 0 auto;
 }
 
 .attackBtn {
@@ -17,6 +18,6 @@
     border: 3px solid red;
 }
 
-.attacker {
+.player {
     border: 3px solid blue;
 }

@@ -2,8 +2,8 @@ $(document).ready(function() {
     var player;
     var defender;
     var fightCounter = 1;
-    var enemiesToKill;
-    var enemiesKilled = 0;
+    var enemiesToKill = [];
+    var deadCharacters = [];
 
 
     let characters = {
@@ -34,20 +34,23 @@ $(document).ready(function() {
     };
 
     var createCard = function(char, spawnPos, charRole) {
-        var card = $("<div class='col char' data-name='"+ char.name +"' >");
-        var cardName = $("<div class='char-name'>").text(char.name);
-        var cardHealth = $("<div class='char-health'>").text(char.hp);
+        var column = $("<div class='col text-center'>")
+        var card = $("<div class='char' data-name='"+ char.name +"' >");
+        var cardName = $("<p class='char-name'>").text(char.name);
+        var cardHealth = $("<p class='char-health'>").text(char.hp);
         // aligin card parts into card structure
         card.append(cardName).append(cardHealth);
-        // place card in its correct field based on attr.
-        $(spawnPos).append(card);
+        column.append(card);
+        $(spawnPos).append(column);
         //add class based on role chosen for character.
-        if(charRole === "defender") {
-            $(char).addClass('defender');
-        }else if (charRole === "enemy") {
-            $(char).addClass('enemy');
-        }else {
-            $(char).addClass('player');
+        if(charRole == "defender") {
+            $(card).addClass("defender");
+        }
+        if (charRole == "enemy") {
+            $(card).addClass('enemy');
+        }
+        if(charRole == "player") {
+            $(card).addClass('player');
         }
     }; 
     
@@ -68,6 +71,7 @@ $(document).ready(function() {
         }else{
             console.log('spawnCard says: Parameters dont make sense. char: '+char+'spawnPos: '+spawnPos);
         }
+        console.log('spawnCard was called.  char: '+char+'spawnPos: '+spawnPos)
     }
 
     spawnCard(characters, ".player-select-field");
@@ -78,17 +82,60 @@ $(document).ready(function() {
         if(player === undefined) {
             name = $(this).data("name");
             player = characters[name];
+            console.log(player.name);
             spawnCard(characters[name], ".player-field");
             console.log("clicked on " + $(this).data("name")+ " to be the player!");
-        }
-        //every other character tha
-        for(var key in characters) {
-            if(key != name) {
-                spawnCard(characters[key], ".enemy-field")
-                enemiesToKill++;
+            //every other character spawns at "enemy-field"
+            for(var key in characters) {
+                if(key != name) {
+                    spawnCard(characters[key], ".enemy-field")
+                    enemiesToKill.push(characters[key]);
+                }
+            }
+            console.log("total enemies waiting: " + enemiesToKill);
+            //if player is selcted and there is no defender, click selects defender
+        } else if(defender === undefined) {
+            if($(this).data("name") != player.name) {
+                console.log($(this).data('name'));
+                name = $(this).data("name");
+                defender = characters[name];
+                spawnCard(characters[name], ".defender-field");
+                enemiesToKill.push(characters[name]);
+                // update enemies on screen
+                $(".enemy-field").empty();
+                for(var key in enemiesToKill) {
+                    if(enemiesToKill[key] != defender) {
+                        spawnCard(enemiesToKill[key], ".enemy-field");
+                    }
+                }
             }
         }
     });
+
+    $(document).on("click","button", function() {
+        if($(this).hasClass("attackBtn")) {
+            //player attacks
+            defender.hp -= (player.atk * fightCounter);
+            //player hits back
+            player.hp -= defender.counterAtk;
+            fightCounter++;
+            console.log("defender hp: " + defender.hp + " fightCounter: " + fightCounter);
+            console.log("player hp: " + player.hp);
+            // update fighting cards
+            $(".player-field").empty();
+            $(".defender-field").empty();
+            spawnCard(player, ".player-field");
+            spawnCard(defender, ".defender-field");
+
+        }
+    });
+    while(player.hp > 0) {
+        if(defender.hp <= 0) {
+            $(".defender-field").empty();
+            deadCharacters.push(defender.name);
+            defender = undefined;
+        }
+    }
 
     
 
