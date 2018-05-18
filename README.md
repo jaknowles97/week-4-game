@@ -2,7 +2,7 @@
 
 A simple RPG card game made with JavaScript.
 ***
-
+https://jaknowles97.github.io/week-4-game/
 ## Instructions
 
 1. On page load you will see all the cards grouped together. Click on the character you would like to play as.
